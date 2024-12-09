@@ -6,13 +6,11 @@ on:
       - main
 
 jobs:
-  check-and-create-gh-pages:
+  create-gh-pages: # Đổi tên job, job này sẽ chạy đầu tiên để tạo branch gh-pages nếu chưa có
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
+      - name: Checkout main
         uses: actions/checkout@v3
-        with:
-          ref: main
 
       - name: Check if gh-pages exists
         id: check_gh_pages
@@ -32,13 +30,10 @@ jobs:
 
   deploy-frontend:
     runs-on: ubuntu-latest
-    needs: check-and-create-gh-pages
+    needs: create-gh-pages # Chạy sau khi job create-gh-pages hoàn thành
     steps:
-      - name: Checkout code
+      - name: Checkout main # Chỉ checkout code từ main branch 1 lần
         uses: actions/checkout@v3
-        with:
-          ref: main  # Checkout branch main
-
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
@@ -51,34 +46,18 @@ jobs:
       - name: Build frontend
         run: npm run build
         working-directory: ./client
-        env:
-          CI: ""
-          NODE_OPTIONS: "--openssl-legacy-provider"
 
-      - name: Checkout gh-pages branch
-        uses: actions/checkout@v3
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
         with:
-          ref: gh-pages  # Checkout branch gh-pages
-          path: gh-pages # Clone vào thư mục gh-pages
-
-      - name: Copy build files to gh-pages root
-        run: |
-          rm -rf ./gh-pages/*  # Xóa toàn bộ nội dung trong thư mục gh-pages
-          mkdir -p gh-pages # Đảm bảo thư mục gh-pages tồn tại
-          cp -r ./client/build/* ./gh-pages/ # Copy nội dung từ client/build vào gh-pages
-
-      - name: Commit and push to gh-pages branch
-        run: |
-          cd gh-pages
-          git config user.email "youremail@example.com"  # Thay bằng email của bạn
-          git config user.name "Your Name"  # Thay bằng tên của bạn
-          git add .
-          git commit -m "Deploy to GitHub Pages"
-          git push origin gh-pages
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./client/build # Đường dẫn đến thư mục build của frontend
+          # publish_branch: gh-pages  # Default là gh-pages, bạn có thể bỏ dòng này
+          # cname: example.com # Nếu bạn có custom domain
 
   deploy-backend:
     runs-on: ubuntu-latest
-    # needs: deploy-frontend # Bỏ comment nếu deploy backend cần deploy frontend thành công
+    # needs: deploy-frontend # Bỏ comment nếu backend cần frontend deploy xong
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -96,4 +75,4 @@ jobs:
         uses: johnbeynon/render-deploy-action@v0.0.8
         with:
           api-key: ${{ secrets.RENDER_API_KEY }}
-          service-id: ${{ secrets.RENDER_SERVICE_ID }}
+          service-id: ${{ secrets.RENDER_SERVICE_ID_BACKEND }} # Nên đặt tên để dễ phân biệt
