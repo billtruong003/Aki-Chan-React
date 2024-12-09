@@ -3,6 +3,7 @@
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11"
   },
   "dependencies": {
-    "react-markdown": "^9.0.1"
+    "react-markdown": "^9.0.1",
+    "remark-gfm": "^4.0.0"
   }
 }

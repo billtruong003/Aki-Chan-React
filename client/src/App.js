@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import axios from 'axios';
+import ReactMarkdown from 'react-markdown'; // Import ReactMarkdown
+import remarkGfm from 'remark-gfm'; // Import remarkGfm
 import './App.css';
 
 const API_BASE_URL = 'https://aki-chan-backend.onrender.com';
