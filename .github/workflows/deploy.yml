@@ -3,7 +3,7 @@ name: Deploy Aki Chatbot
 on:
   push:
     branches:
-      - main  # Chạy workflow khi có push lên branch main
+      - main
 
 jobs:
   deploy-frontend:
@@ -15,7 +15,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 16  # Sử dụng Node.js 16
+          node-version: 'lts/*' # Sử dụng phiên bản LTS mới nhất
 
       - name: Install frontend dependencies
         run: npm install
@@ -32,19 +32,28 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./client/build
-          
-  deploy-backend:
+
+    deploy-backend:
     runs-on: ubuntu-latest
-    needs: deploy-frontend
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Deploy to Heroku # Deploy backend lên Heroku
-        uses: akhileshns/heroku-deploy@v3.12.14
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
         with:
-          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
-          heroku_app_name: "your-heroku-app-name" # Thay bằng tên app Heroku của bạn
-          heroku_email: "your-heroku-email" # Thay bằng email Heroku của bạn
-          procfile: "web: node backend/index.js" # Cấu hình Procfile
-          appdir: "backend" # Chỉ định thư mục backend
+          node-version: 'lts/*'
+
+      - name: Install backend dependencies
+        run: npm install
+        working-directory: ./server
+
+      - name: Build backend
+        run: npm run build
+        working-directory: ./server
+
+      - name: Deploy to Render
+        uses: johnbeynon/render-deploy-action@v0.0.8
+        with:
+          api-key: ${{ secrets.RENDER_API_KEY }}
+          service-id: ${{ secrets.RENDER_SERVICE_ID }}
