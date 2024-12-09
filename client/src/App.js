@@ -50,16 +50,17 @@ function App() {
       if (response.status === 200 && response.data && response.data.text) {
         const newMessage = response.data.text;
 
+        // Thay đổi cách cập nhật state chatHistory ở đây:
         setChatHistory(prevHistory => [
-          ...prevHistory,
           { role: 'user', content: userInput },
           { role: 'aki', content: newMessage },
+          ...prevHistory, // Thêm tin nhắn cũ xuống dưới
         ]);
 
         localStorage.setItem('chatHistory', JSON.stringify([
-          ...chatHistory,
           { role: 'user', content: userInput },
           { role: 'aki', content: newMessage },
+          ...chatHistory, // Thêm tin nhắn cũ xuống dưới
         ]));
       } else {
         console.error("Invalid response from server:", response);
