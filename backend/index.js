@@ -20,12 +20,13 @@ const model = genAI.getGenerativeModel({ model: 'gemini-exp-1206' });
 const upload = multer({ storage: multer.memoryStorage() });
 
 // CORS configuration
-const allowedOrigins = ['https://billtruong003.github.io', 'http://localhost:3000']; // Sửa allowedOrigins
+const allowedOrigins = ['https://billtruong003.github.io', 'http://localhost:3000']; // Chính xác origin của frontend
 app.use(
     cors({
         origin: function (origin, callback) {
             // Cho phép các request không có origin (ví dụ: từ Postman)
             if (!origin) return callback(null, true);
+
             if (allowedOrigins.indexOf(origin) === -1) {
                 var msg =
                     'The CORS policy for this site does not ' +
@@ -38,8 +39,9 @@ app.use(
 );
 
 // Thêm middleware để parse request body
-app.use(express.json()); // Để parse JSON body
-app.use(express.urlencoded({ extended: true })); // Để parse URL-encoded body
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
 
 const historyFilePath = path.join(__dirname, 'chat_history.json');
 const configFilePath = path.join(__dirname, 'config_character.txt');
