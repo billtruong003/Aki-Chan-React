@@ -30,6 +30,23 @@ jobs:
           CI: ""
           NODE_OPTIONS: "--openssl-legacy-provider"
 
+      - name: Check if gh-pages exists
+        id: check_gh_pages
+        run: |
+          git fetch origin gh-pages:gh-pages
+          if [ $? -eq 0 ]; then
+            echo "::set-output name=exists::true"
+          else
+            echo "::set-output name=exists::false"
+          fi
+
+      - name: Create gh-pages branch if it doesn't exist
+        if: steps.check_gh_pages.outputs.exists == 'false'
+        run: |
+          git checkout main # Chắc chắn đang ở branch main
+          git checkout -b gh-pages # Tạo gh-pages từ main
+          git push --set-upstream origin gh-pages # Push và theo dõi branch
+
       - name: Checkout gh-pages branch
         uses: actions/checkout@v3
         with:
@@ -39,13 +56,14 @@ jobs:
       - name: Copy build files to gh-pages root
         run: |
           rm -rf ./gh-pages/*  # Xóa toàn bộ nội dung trong thư mục gh-pages
+          mkdir -p gh-pages # Đảm bảo thư mục gh-pages tồn tại
           cp -r ./client/build/* ./gh-pages/ # Copy nội dung từ client/build vào gh-pages
 
       - name: Commit and push to gh-pages branch
         run: |
           cd gh-pages
-          git config --global user.email "youremail@example.com"  # Thay bằng email của bạn
-          git config --global user.name "Your Name"  # Thay bằng tên của bạn
+          git config user.email "youremail@example.com"  # Thay bằng email của bạn
+          git config user.name "Your Name"  # Thay bằng tên của bạn
           git add .
           git commit -m "Deploy to GitHub Pages"
           git push origin gh-pages
