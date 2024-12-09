@@ -1,6 +1,43 @@
-deploy-backend:
+name: Deploy Aki Chatbot
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy-frontend:
     runs-on: ubuntu-latest
-    # needs: deploy-frontend # Cân nhắc bỏ nếu không cần thiết
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 'lts/*'
+
+      - name: Install frontend dependencies
+        run: npm install
+        working-directory: ./client
+
+      - name: Build frontend
+        run: npm run build
+        working-directory: ./client
+        env:
+          CI: ""
+          NODE_OPTIONS: "--openssl-legacy-provider" # Fix lỗi OpenSSL
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./client/build # Đường dẫn đến thư mục build của frontend
+          # cname: example.com # Optional: Nếu bạn dùng custom domain
+
+  deploy-backend:
+    runs-on: ubuntu-latest
+    # needs: deploy-frontend # Bỏ comment nếu deploy backend cần deploy frontend thành công
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -14,10 +51,7 @@ deploy-backend:
         run: npm install
         working-directory: ./backend
 
-      # Xóa bước Build backend này
-      #- name: Build backend
-      #  run: npm run build  
-      #  working-directory: ./backend
+      # Bạn đã xóa bước build backend - điều này là chính xác nếu backend không cần build
 
       - name: Deploy to Render
         uses: johnbeynon/render-deploy-action@v0.0.8
