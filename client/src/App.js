@@ -10,6 +10,7 @@ function App() {
   const [chatHistory, setChatHistory] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isListening, setIsListening] = useState(false);
+  const [currentLanguage, setCurrentLanguage] = useState('vi-VN');
 
   useEffect(() => {
     const loadHistory = async () => {
