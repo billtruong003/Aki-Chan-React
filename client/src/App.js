@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import axios from 'axios';
 import './App.css';
 
@@ -9,7 +9,7 @@ function App() {
   const [image, setImage] = useState(null);
   const [chatHistory, setChatHistory] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [isListening, setIsListening] = useState(false); // Thêm state để theo dõi trạng thái nghe
+  const [isListening, setIsListening] = useState(false);
 
   useEffect(() => {
     const loadHistory = async () => {
@@ -91,7 +91,11 @@ function App() {
   // Phần xử lý nhận diện giọng nói
   const SpeechRecognition =
     window.SpeechRecognition || window.webkitSpeechRecognition;
-  const recognition = SpeechRecognition ? new SpeechRecognition() : null;
+
+  // Sử dụng useMemo để bọc việc khởi tạo recognition
+  const recognition = useMemo(() => {
+    return SpeechRecognition ? new SpeechRecognition() : null;
+  }, [SpeechRecognition]);
 
   useEffect(() => {
     if (recognition) {
@@ -106,7 +110,7 @@ function App() {
 
       recognition.onresult = (event) => {
         const result = event.results[0][0].transcript;
-        setUserInput(result); // Cập nhật userInput state
+        setUserInput(result);
         console.log('Speech recognition result:', result);
       };
 
@@ -150,7 +154,6 @@ function App() {
           className="user-input"
         />
         <input type="file" onChange={handleImageChange} className="image-upload" />
-        {/* Nút bấm để thu âm */}
         <button onClick={handleVoiceInput} className="voice-input-button">
           {isListening ? 'Dừng thu âm' : 'Bắt đầu thu âm'}
         </button>
