@@ -2,13 +2,14 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './App.css';
 
-const API_BASE_URL = 'https://aki-chan-backend.onrender.com'; // Thay bằng URL backend của bạn
+const API_BASE_URL = 'https://aki-chan-backend.onrender.com';
 
 function App() {
   const [userInput, setUserInput] = useState('');
   const [image, setImage] = useState(null);
   const [chatHistory, setChatHistory] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isListening, setIsListening] = useState(false); // Thêm state để theo dõi trạng thái nghe
 
   useEffect(() => {
     const loadHistory = async () => {
@@ -18,7 +19,7 @@ function App() {
           setChatHistory(JSON.parse(storedHistory));
         }
       } catch (error) {
-        console.error("Error loading chat history:", error);
+        console.error('Error loading chat history:', error);
       }
     };
     loadHistory();
@@ -43,31 +44,33 @@ function App() {
     try {
       const response = await axios.post(`${API_BASE_URL}/api/chat`, formData, {
         headers: {
-          'Content-Type': 'multipart/form-data'
-        }
+          'Content-Type': 'multipart/form-data',
+        },
       });
 
       if (response.status === 200 && response.data && response.data.text) {
         const newMessage = response.data.text;
 
-        // Thay đổi cách cập nhật state chatHistory ở đây:
-        setChatHistory(prevHistory => [
+        setChatHistory((prevHistory) => [
           { role: 'user', content: userInput },
           { role: 'aki', content: newMessage },
-          ...prevHistory, // Thêm tin nhắn cũ xuống dưới
+          ...prevHistory,
         ]);
 
-        localStorage.setItem('chatHistory', JSON.stringify([
-          { role: 'user', content: userInput },
-          { role: 'aki', content: newMessage },
-          ...chatHistory, // Thêm tin nhắn cũ xuống dưới
-        ]));
+        localStorage.setItem(
+          'chatHistory',
+          JSON.stringify([
+            { role: 'user', content: userInput },
+            { role: 'aki', content: newMessage },
+            ...chatHistory,
+          ])
+        );
       } else {
-        console.error("Invalid response from server:", response);
+        console.error('Invalid response from server:', response);
         alert('Lỗi server. Vui lòng thử lại.');
       }
     } catch (error) {
-      console.error("Error:", error);
+      console.error('Error:', error);
       alert('Lỗi khi gọi API. Vui lòng thử lại.');
     } finally {
       setIsLoading(false);
@@ -80,9 +83,53 @@ function App() {
     try {
       await axios.post(`${API_BASE_URL}/api/clear-history`);
       setChatHistory([]);
-      // localStorage.removeItem('chatHistory'); // Không cần dòng này
     } catch (error) {
-      console.error("Error clearing chat history:", error);
+      console.error('Error clearing chat history:', error);
+    }
+  };
+
+  // Phần xử lý nhận diện giọng nói
+  const SpeechRecognition =
+    window.SpeechRecognition || window.webkitSpeechRecognition;
+  const recognition = SpeechRecognition ? new SpeechRecognition() : null;
+
+  useEffect(() => {
+    if (recognition) {
+      recognition.lang = 'vi-VN';
+      recognition.continuous = false;
+      recognition.interimResults = false;
+
+      recognition.onstart = () => {
+        setIsListening(true);
+        console.log('Speech recognition started');
+      };
+
+      recognition.onresult = (event) => {
+        const result = event.results[0][0].transcript;
+        setUserInput(result); // Cập nhật userInput state
+        console.log('Speech recognition result:', result);
+      };
+
+      recognition.onerror = (event) => {
+        console.error('Speech recognition error:', event.error);
+      };
+
+      recognition.onend = () => {
+        setIsListening(false);
+        console.log('Speech recognition ended');
+      };
+    }
+  }, [recognition]);
+
+  const handleVoiceInput = () => {
+    if (recognition) {
+      if (isListening) {
+        recognition.stop();
+      } else {
+        recognition.start();
+      }
+    } else {
+      alert('Trình duyệt của bạn không hỗ trợ Speech Recognition API.');
     }
   };
 
@@ -103,6 +150,10 @@ function App() {
           className="user-input"
         />
         <input type="file" onChange={handleImageChange} className="image-upload" />
+        {/* Nút bấm để thu âm */}
+        <button onClick={handleVoiceInput} className="voice-input-button">
+          {isListening ? 'Dừng thu âm' : 'Bắt đầu thu âm'}
+        </button>
         <button onClick={handleSubmit} disabled={isLoading} className="submit-button">
           Gửi
         </button>
