@@ -13,12 +13,9 @@
     "react-scripts": "^3.0.1"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "build": "set NODE_OPTIONS=--openssl-legacy-provider && react-scripts build", // Cho Windows
-    "build": "export NODE_OPTIONS=--openssl-legacy-provider && react-scripts build", // Cho Linux/macOS
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "eslintConfig": {
     "extends": [
