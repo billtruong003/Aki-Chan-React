@@ -77,7 +77,7 @@ function App() {
 
   return (
     <div className="app-container">
-      <img src="/aki-maid.webp" alt="Aki" className="aki-image" />
+      <img src="aki-maid.webp" alt="Aki" className="aki-image" />
       <h1 className="app-title">Aki-Maid</h1>
       <p className="app-description">
         Chào mừng bạn đến với chatbot Aki! Bạn có thể nhập câu hỏi và/hoặc tải lên hình ảnh để nhận câu trả lời từ Aki.
