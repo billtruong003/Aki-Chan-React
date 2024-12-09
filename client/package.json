@@ -1,5 +1,5 @@
 {
-  "homepage": "https://github.com/billtruong003/Aki-Chan-React",
+  "homepage": ".",
   "predeploy": "npm run build",
   "deploy": "gh-pages -d build",
   "name": "client",
@@ -13,7 +13,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "set NODE_OPTIONS=--openssl-legacy-provider && react-scripts build",
+    "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
