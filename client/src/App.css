@@ -1,0 +1,115 @@
+/* Các kiểu cho toàn bộ trang */
+body {
+  background-color: #212121;
+  /* Màu nền tối (đen) */
+  color: #ffffff;
+  /* Chữ màu trắng để nổi bật trên nền đen */
+  font-family: sans-serif;
+}
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
+
+/* Hình ảnh của Aki */
+.aki-image {
+  border-radius: 50%;
+  border: 5px solid #ff6600;
+  /* Viền cam cho ảnh */
+  width: 400px;
+  margin-bottom: 20px;
+}
+
+/* Tiêu đề ứng dụng */
+.app-title {
+  color: #ff6600;
+  /* Màu cam cho tiêu đề */
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.app-description {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.input-container {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.user-input {
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  flex-grow: 1;
+}
+
+.image-upload {
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+.submit-button {
+  background-color: #ff6600;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+}
+
+.submit-button:hover {
+  background-color: #e65c00;
+}
+
+.submit-button:disabled {
+  background-color: #ccc;
+  cursor: default;
+}
+
+.loading {
+  margin-bottom: 20px;
+}
+
+.chat-history {
+  width: 100%;
+  max-width: 800px;
+}
+
+.message {
+  padding: 10px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  word-wrap: break-word;
+}
+
+.user-message {
+  background-color: #ff6600;
+  color: white;
+  text-align: right;
+}
+
+.aki-message {
+  background-color: #ffebcc;
+  color: #212121;
+}
+
+.clear-button {
+  background-color: #ff6600;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  margin-top: 20px;
+}
+
+.clear-button:hover {
+  background-color: #e65c00;
+}
