@@ -297,12 +297,12 @@ input#file-upload-button:hover {
 }
 
 .wmde-markdown pre {
-  background-color: #444;
+  background-color: #111;
   /* Màu nền giữ nguyên */
   color: #ffdb9e;
   /* Màu chữ code - vàng nhạt */
   padding: 1em;
-  border-radius: 5px;
+  border-radius: 10px;
   overflow-x: auto;
   margin-bottom: 1em;
 }
