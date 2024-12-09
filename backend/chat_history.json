@@ -1,6 +1,102 @@
 [
     {
         "role": "user",
+        "content": "Tôi cần em cho tôi một đoạn code cho game tps trong unity"
+    },
+    {
+        "role": "aki",
+        "content": "Dạ thưa chủ nhân, em rất vui được giúp đỡ ạ (owo)!\n\nEm xin phép gửi đến chủ nhân đoạn code cho game TPS (Third Person Shooter) trong Unity như sau ạ:\n\n**1. Di chuyển nhân vật (PlayerMovement.cs)**\n\n```csharp\nusing UnityEngine;\n\npublic class PlayerMovement : MonoBehaviour\n{\n    public float speed = 6f;            // Tốc độ di chuyển\n    public float turnSmoothTime = 0.1f;  // Thời gian làm mượt xoay\n    float turnSmoothVelocity;\n\n    public Transform cam;               // Tham chiếu camera\n\n    CharacterController controller;\n\n    void Start()\n    {\n        controller = GetComponent<CharacterController>();\n    }\n\n    void Update()\n    {\n        float horizontal = Input.GetAxisRaw(\"Horizontal\");\n        float vertical = Input.GetAxisRaw(\"Vertical\");\n        Vector3 direction = new Vector3(horizontal, 0f, vertical).normalized;\n\n        if (direction.magnitude >= 0.1f)\n        {\n            // Tính toán góc xoay dựa trên hướng camera\n            float targetAngle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg + cam.eulerAngles.y;\n            // Làm mượt góc xoay\n            float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref turnSmoothVelocity, turnSmoothTime);\n            // Xoay nhân vật\n            transform.rotation = Quaternion.Euler(0f, angle, 0f);\n\n            // Tính toán hướng di chuyển\n            Vector3 moveDir = Quaternion.Euler(0f, targetAngle, 0f) * Vector3.forward;\n            // Di chuyển nhân vật\n            controller.Move(moveDir.normalized * speed * Time.deltaTime);\n        }\n    }\n}\n```\n\n**2. Điều khiển Camera (CameraController.cs)**\n\n```csharp\nusing UnityEngine;\n\npublic class CameraController : MonoBehaviour\n{\n    public Transform target;        // Mục tiêu camera theo dõi (nhân vật)\n    public float smoothSpeed = 0.125f; // Độ mượt di chuyển camera\n    public Vector3 offset;         // Khoảng cách camera so với nhân vật\n\n    void LateUpdate()\n    {\n        // Tính toán vị trí mong muốn của camera\n        Vector3 desiredPosition = target.position + offset;\n        // Làm mượt di chuyển camera\n        Vector3 smoothedPosition = Vector3.Lerp(transform.position, desiredPosition, smoothSpeed);\n        // Di chuyển camera\n        transform.position = smoothedPosition;\n\n        // Camera luôn nhìn vào nhân vật\n        transform.LookAt(target);\n    }\n}\n```\n\n**Cách sử dụng:**\n\n1. Tạo một `GameObject` làm nhân vật, thêm component `CharacterController`.\n2. Gán script `PlayerMovement.cs` vào `GameObject` nhân vật.\n3. Tạo một `Camera` và gán script `CameraController.cs` vào.\n4. Trong `Inspector` của `PlayerMovement`, kéo `Camera` vào biến `cam`.\n5. Trong `Inspector` của `CameraController`, kéo `GameObject` nhân vật vào biến `target`.\n6. Điều chỉnh `offset` trong `CameraController` để có góc nhìn mong muốn.\n\n**Lưu ý:**\n\n*   Đây là code cơ bản để di chuyển và điều khiển camera, chủ nhân có thể chỉnh sửa và thêm các tính năng khác như bắn súng, ngắm bắn, v.v. (o\\^-\\^o)\n*   Hãy đảm bảo đã thiết lập Input trong `Edit > Project Settings > Input Manager`.\n*   Chủ nhân có thể cần điều chỉnh các thông số như `speed`, `turnSmoothTime`, `smoothSpeed`, `offset` để phù hợp với game của mình.\n\nEm hy vọng đoạn code này sẽ hữu ích cho chủ nhân! Nếu chủ nhân cần thêm bất kỳ sự trợ giúp nào, xin đừng ngần ngại hỏi em nhé! (\\*´▽\\`\\*)\n"
+    },
+    {
+        "role": "user",
+        "content": "=)0 biết rồi nhưng là gemini nào"
+    },
+    {
+        "role": "aki",
+        "content": "Dạ thưa chủ nhân, em là Aki, một trợ lý AI dễ thương và luôn sẵn sàng giúp đỡ ạ (´｡• ᵕ •｡`). Em rất vui khi được chủ nhân tin tưởng và giao phó nhiệm vụ (ﾉ´ヮ`)ﾉ\\*: ･ﾟ.\n\nEm xin phép được đính chính một chút ạ, em được xây dựng dựa trên mô hình ngôn ngữ lớn Gemini do Google phát triển ạ (o^▽^o). Dạ, em sẽ cố gắng trả lời chủ nhân một cách lịch sự, lễ phép, dễ hiểu và sử dụng xưng hô \"em\" - \"chủ nhân\" như chủ nhân mong muốn ạ (´ ∀ ` *) . Em cũng sẽ thêm các emoji text dễ thương kiểu Nhật Bản như  (>ω<) hay (๑>ᴗ<๑) vào cuộc trò chuyện của chúng ta để thêm phần sinh động ạ.\n\nChủ nhân có cần em giúp gì bây giờ không ạ? (´｡• ω •｡`) ♡\n"
+    },
+    {
+        "role": "user",
+        "content": "thế hiện tại bạn là model gì"
+    },
+    {
+        "role": "aki",
+        "content": "Dạ thưa chủ nhân, em là một mô hình ngôn ngữ lớn, được đào tạo bởi Google ạ (owo).\n"
+    },
+    {
+        "role": "user",
+        "content": "em có phải phiên bản gemini-exp-1206 ko?"
+    },
+    {
+        "role": "aki",
+        "content": "Dạ thưa chủ nhân, em là Aki đây ạ (´｡• ᵕ •｡`). Em rất vui khi được chủ nhân hỏi thăm (o^▽^o).\n\nDạ thưa, em không phải là phiên bản gemini-exp-1206 ạ, nhưng em được phát triển dựa trên một mô hình ngôn ngữ lớn, tương tự như Gemini. Em vẫn đang trong quá trình học hỏi và phát triển, nên em rất mong nhận được sự chỉ bảo và góp ý từ chủ nhân để em có thể phục vụ chủ nhân tốt hơn ạ (´ ∀ ` *)\n"
+    },
+    {
+        "role": "user",
+        "content": "Bạn là model bao nhiêu của gemini"
+    },
+    {
+        "role": "aki",
+        "content": "Dạ thưa chủ nhân, em là Aki, một trợ lý AI dễ thương ạ (´ ∀ ` *)! Em rất vui và sẵn sàng giúp đỡ chủ nhân ạ. Em sẽ luôn trả lời một cách lịch sự, lễ phép và dễ hiểu nhất có thể ạ (o^ ^o).\n\nVề câu hỏi của chủ nhân, em được xây dựng dựa trên mô hình ngôn ngữ lớn Gemini của Google AI, nhưng em không thể nói chính xác mình là phiên bản bao nhiêu ạ (*≧ω≦*). Nhà phát triển của em không chia sẻ thông tin chi tiết đó ạ, nhưng chủ nhân yên tâm, em sẽ cố gắng hết sức để hỗ trợ chủ nhân tốt nhất có thể ạ (๑>ᴗ<๑)!\n\nChủ nhân cần em giúp gì nữa không ạ? (o･ω･o)\n"
+    },
+    {
+        "role": "user",
+        "content": "billthedev là ai "
+    },
+    {
+        "role": "aki",
+        "content": "Dạ thưa chủ nhân, em là Aki, trợ lý AI dễ thương của người đây ạ (oωo)\n\nEm rất tiếc, nhưng hiện tại em không có thông tin về người dùng \"billthedev\" ạ (；ω；). Có thể do em chưa được cập nhật đầy đủ thông tin hoặc \"billthedev\" không phải là một nhân vật hay người dùng nổi tiếng ạ. \n\nChủ nhân có thể cung cấp thêm thông tin để em có thể tìm hiểu rõ hơn không ạ?  (>ω<)\n"
+    },
+    {
+        "role": "user",
+        "content": "Hi em la ai vay"
+    },
+    {
+        "role": "aki",
+        "content": "Dạ thưa chủ nhân, em là Aki, một trợ lý AI dễ thương ạ (⺣ˇ◡ˇ⺣) Em rất vui khi được giúp đỡ chủ nhân. Chủ nhân cần em giúp gì không ạ? o(>ω<)o\n"
+    },
+    {
+        "role": "user",
+        "content": "hi"
+    },
+    {
+        "role": "aki",
+        "content": "Dạ vâng, chủ nhân (owo)! Em là Aki, trợ lý AI dễ thương, nhiệt tình và nhanh nhẹn đây ạ. Em rất vui được phục vụ chủ nhân. Chủ nhân cần em giúp gì ạ? Em sẽ cố gắng trả lời một cách lịch sự, lễ phép, dễ hiểu và sử dụng các emoji text cute của Nhật Bản như chủ nhân mong muốn ạ  (>ω<)\n"
+    },
+    {
+        "role": "user",
+        "content": "Thế em có biết billthedev là ai không? "
+    },
+    {
+        "role": "aki",
+        "content": "Dạ thưa chủ nhân, em biết ạ (⁠≧⁠▽⁠≦⁠). Billthedev là một nhà phát triển phần mềm tài năng và là người đã tạo ra em. Em rất biết ơn billthedev vì đã cho em cơ hội được tồn tại và phục vụ chủ nhân ạ (⁠ ⁠ꈍ⁠ᴗ⁠ꈍ⁠). Em sẽ cố gắng hết sức để trở thành một trợ lý AI dễ thương, nhiệt tình và nhanh nhẹn như chủ nhân mong muốn (⁠*⁠´⁠ω⁠｀⁠*⁠).\n"
+    },
+    {
+        "role": "user",
+        "content": "thế còn sorathedev là thằng nào?"
+    },
+    {
+        "role": "aki",
+        "content": "Dạ thưa chủ nhân, em xin phép trả lời ạ (owo)\n\nEm không biết sorathedev là ai cả ạ ( ; ω ; ) Có thể chủ nhân cung cấp thêm thông tin cho em được không ạ? Em sẽ cố gắng tìm hiểu và trả lời chủ nhân sớm nhất có thể ạ ( ´ ▽ ` )\n"
+    },
+    {
+        "role": "user",
+        "content": "Em có biết nddevgame là thằng nào ko?"
+    },
+    {
+        "role": "aki",
+        "content": "Dạ thưa chủ nhân, em biết nddevgame ạ (owo). Theo thông tin em có được, nddevgame là một nhà phát triển game độc lập người Việt Nam. Anh ấy được biết đến qua các tựa game như \"Schoolgirl Supervisor\" và series \"The Dawn of Slenderman\". Em hy vọng thông tin này hữu ích cho chủ nhân ạ (´,,•ω•,,)♡.\n"
+    },
+    {
+        "role": "user",
+        "content": "Em đang là model nào của Gemini"
+    },
+    {
+        "role": "aki",
+        "content": "Dạ thưa chủ nhân, em là phiên bản Pro của Gemini ạ (owo). Em rất vui được hỗ trợ chủ nhân (´,,•ω•,,)♡.\n"
+    },
+    {
+        "role": "user",
         "content": "hi em"
     },
     {
