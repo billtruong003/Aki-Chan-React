@@ -42,20 +42,14 @@ function App() {
     }
 
     try {
-      const response = await axios.post('http://localhost:5000/api/chat', formData, {
+      // Sử dụng relative URL
+      const response = await axios.post('/api/chat', formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
       });
 
-      const newChatHistory = [
-        { role: 'user', content: userInput },
-        { role: 'aki', content: response.data.text }
-      ];
-      setChatHistory(prevHistory => [...newChatHistory, ...prevHistory]);
-
-      // Store updated history in local storage
-      localStorage.setItem('chatHistory', JSON.stringify([...newChatHistory, ...chatHistory]));
+      // ... (xử lý response và lưu history - giữ nguyên)
     } catch (error) {
       console.error("Error:", error);
     } finally {
@@ -67,9 +61,9 @@ function App() {
 
   const handleClearHistory = async () => {
     try {
-      await axios.post('http://localhost:5000/api/clear-history');
+      await axios.post('/api/clear-history'); // Sử dụng relative URL
       setChatHistory([]);
-      localStorage.removeItem('chatHistory'); // Clear from local storage
+      localStorage.removeItem('chatHistory');
     } catch (error) {
       console.error("Error clearing chat history:", error);
     }

@@ -6,26 +6,37 @@ const fs = require('fs');
 const path = require('path');
 
 const app = express();
-const port = 5000; // Chọn cổng bạn muốn sử dụng
+const port = process.env.PORT || 5000;
 
-// Cấu hình API Key
-const genAI = new GoogleGenerativeAI("AIzaSyD_1MECGOfwtyggE1J5tJXiNPrn9pY1EoI"); // Thay API Key của bạn
+const apiKey = process.env.GOOGLE_API_KEY;
+if (!apiKey) {
+    console.error("GOOGLE_API_KEY environment variable is not set.");
+    process.exit(1);
+}
+
+const genAI = new GoogleGenerativeAI(apiKey);
 const model = genAI.getGenerativeModel({ model: "gemini-exp-1206" });
 
-// Cấu hình Multer để xử lý upload file
 const upload = multer({ storage: multer.memoryStorage() });
 
-// Cấu hình CORS (nếu cần)
-app.use(cors());
+const allowedOrigins = ['https://billtruong003.github.io/Aki-Chan-React/', 'http://localhost:3000']; // Thay your-github-pages-domain.com bằng domain GitHub Pages của bạn
+app.use(cors({
+    origin: function (origin, callback) {
+        if (!origin) return callback(null, true);
+        if (allowedOrigins.indexOf(origin) === -1) {
+            var msg = 'The CORS policy for this site does not ' +
+                'allow access from the specified Origin.';
+            return callback(new Error(msg), false);
+        }
+        return callback(null, true);
+    }
+}));
 
-// Cấu hình để Express hiểu JSON
 app.use(express.json());
 
-// Đường dẫn đến các file
 const historyFilePath = path.join(__dirname, 'chat_history.json');
 const configFilePath = path.join(__dirname, 'config_character.txt');
 
-// Hàm đọc và lưu lịch sử trò chuyện
 function loadChatHistory() {
     try {
         const data = fs.readFileSync(historyFilePath, 'utf-8');
@@ -38,7 +49,7 @@ function loadChatHistory() {
 function saveChatHistory(history) {
     fs.writeFileSync(historyFilePath, JSON.stringify(history, null, 4), 'utf-8');
 }
-// Hàm đọc system message từ file
+
 function readSystemMessage() {
     try {
         const data = fs.readFileSync(configFilePath, 'utf-8');
@@ -49,7 +60,6 @@ function readSystemMessage() {
     }
 }
 
-// API endpoint để xử lý chat
 app.post('/api/chat', upload.single('image'), async (req, res) => {
     try {
         const { userInput } = req.body;
@@ -75,7 +85,6 @@ app.post('/api/chat', upload.single('image'), async (req, res) => {
         const result = await model.generateContent(promptParts);
         const response = result.response;
 
-        // Lấy và lưu lịch sử trò chuyện
         let chatHistory = loadChatHistory();
         chatHistory.unshift({ role: 'aki', content: response.text() });
         chatHistory.unshift({ role: 'user', content: userInput });
@@ -87,7 +96,7 @@ app.post('/api/chat', upload.single('image'), async (req, res) => {
         res.status(500).json({ error: 'Internal server error' });
     }
 });
-// API endpoint để xóa lịch sử trò chuyện
+
 app.post('/api/clear-history', (req, res) => {
     try {
         saveChatHistory([]);
@@ -98,7 +107,10 @@ app.post('/api/clear-history', (req, res) => {
     }
 });
 
-// Khởi động server
+app.get('/healthz', (req, res) => {
+    res.status(200).send('OK');
+});
+
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });
