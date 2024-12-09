@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './App.css';
 
+const API_BASE_URL = 'https://aki-chan-backend.onrender.com'; // Thay bằng URL backend của bạn
+
 function App() {
   const [userInput, setUserInput] = useState('');
   const [image, setImage] = useState(null);
@@ -39,7 +41,7 @@ function App() {
     }
 
     try {
-      const response = await axios.post('/api/chat', formData, {
+      const response = await axios.post(`${API_BASE_URL}/api/chat`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
@@ -75,9 +77,9 @@ function App() {
 
   const handleClearHistory = async () => {
     try {
-      await axios.post('/api/clear-history');
+      await axios.post(`${API_BASE_URL}/api/clear-history`);
       setChatHistory([]);
-      localStorage.removeItem('chatHistory');
+      // localStorage.removeItem('chatHistory'); // Không cần dòng này
     } catch (error) {
       console.error("Error clearing chat history:", error);
     }

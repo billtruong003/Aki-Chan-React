@@ -1,127 +1,116 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import './App.css';
+const express = require('express');
+const { GoogleGenerativeAI } = require('@google/generative-ai');
+const multer = require('multer');
+const cors = require('cors');
+const fs = require('fs');
+const path = require('path');
 
-const API_BASE_URL = 'https://aki-chan-backend.onrender.com'; // Thay bằng URL backend của bạn
+const app = express();
+const port = process.env.PORT || 5000;
 
-function App() {
-    const [userInput, setUserInput] = useState('');
-    const [image, setImage] = useState(null);
-    const [chatHistory, setChatHistory] = useState([]);
-    const [isLoading, setIsLoading] = useState(false);
-
-    useEffect(() => {
-        const loadHistory = async () => {
-            try {
-                const storedHistory = localStorage.getItem('chatHistory');
-                if (storedHistory) {
-                    setChatHistory(JSON.parse(storedHistory));
-                }
-            } catch (error) {
-                console.error("Error loading chat history:", error);
-            }
-        };
-        loadHistory();
-    }, []);
-
-    const handleInputChange = (event) => {
-        setUserInput(event.target.value);
-    };
-
-    const handleImageChange = (event) => {
-        setImage(event.target.files[0]);
-    };
-
-    const handleSubmit = async () => {
-        setIsLoading(true);
-        const formData = new FormData();
-        formData.append('userInput', userInput);
-        if (image) {
-            formData.append('image', image);
-        }
-
-        try {
-            const response = await axios.post(`${API_BASE_URL}/api/chat`, formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                }
-            });
-
-            if (response.status === 200 && response.data && response.data.text) {
-                const newMessage = response.data.text;
-
-                setChatHistory(prevHistory => [
-                    ...prevHistory,
-                    { role: 'user', content: userInput },
-                    { role: 'aki', content: newMessage },
-                ]);
-
-                localStorage.setItem('chatHistory', JSON.stringify([
-                    ...chatHistory,
-                    { role: 'user', content: userInput },
-                    { role: 'aki', content: newMessage },
-                ]));
-            } else {
-                console.error("Invalid response from server:", response);
-                alert('Lỗi server. Vui lòng thử lại.');
-            }
-        } catch (error) {
-            console.error("Error:", error);
-            alert('Lỗi khi gọi API. Vui lòng thử lại.');
-        } finally {
-            setIsLoading(false);
-            setUserInput('');
-            setImage(null);
-        }
-    };
-
-    const handleClearHistory = async () => {
-        try {
-            await axios.post(`${API_BASE_URL}/api/clear-history`);
-            setChatHistory([]);
-            // localStorage.removeItem('chatHistory'); // Không cần dòng này
-        } catch (error) {
-            console.error("Error clearing chat history:", error);
-        }
-    };
-
-    return (
-        <div className="app-container">
-            <img src="aki-maid.webp" alt="Aki" className="aki-image" />
-            <h1 className="app-title">Aki-Maid</h1>
-            <p className="app-description">
-                Chào mừng bạn đến với chatbot Aki! Bạn có thể nhập câu hỏi và/hoặc tải lên hình ảnh để nhận câu trả lời từ Aki.
-            </p>
-
-            <div className="input-container">
-                <input
-                    type="text"
-                    value={userInput}
-                    onChange={handleInputChange}
-                    placeholder="Nhập câu hỏi của bạn:"
-                    className="user-input"
-                />
-                <input type="file" onChange={handleImageChange} className="image-upload" />
-                <button onClick={handleSubmit} disabled={isLoading} className="submit-button">
-                    Gửi
-                </button>
-            </div>
-
-            {isLoading && <div className="loading">Đang nhận phản hồi từ Aki...</div>}
-
-            <div className="chat-history">
-                {chatHistory.map((message, index) => (
-                    <div key={index} className={`message ${message.role}-message`}>
-                        {message.content}
-                    </div>
-                ))}
-            </div>
-
-            <button onClick={handleClearHistory} className="clear-button">
-                Xóa lịch sử
-            </button>
-        </div>
-    );
+const apiKey = process.env.GOOGLE_API_KEY;
+if (!apiKey) {
+    console.error("GOOGLE_API_KEY environment variable is not set.");
+    process.exit(1);
 }
 
-export default App;
+const genAI = new GoogleGenerativeAI(apiKey);
+const model = genAI.getGenerativeModel({ model: "gemini-exp-1206" });
+
+const upload = multer({ storage: multer.memoryStorage() });
+
+const allowedOrigins = ['https://billtruong003.github.io/Aki-Chan-React/', 'http://localhost:3000']; // Thay your-github-pages-domain.com bằng domain GitHub Pages của bạn
+app.use(cors({
+    origin: function (origin, callback) {
+        if (!origin) return callback(null, true);
+        if (allowedOrigins.indexOf(origin) === -1) {
+            var msg = 'The CORS policy for this site does not ' +
+                'allow access from the specified Origin.';
+            return callback(new Error(msg), false);
+        }
+        return callback(null, true);
+    }
+}));
+
+app.use(express.json());
+
+const historyFilePath = path.join(__dirname, 'chat_history.json');
+const configFilePath = path.join(__dirname, 'config_character.txt');
+
+function loadChatHistory() {
+    try {
+        const data = fs.readFileSync(historyFilePath, 'utf-8');
+        return JSON.parse(data);
+    } catch (error) {
+        return [];
+    }
+}
+
+function saveChatHistory(history) {
+    fs.writeFileSync(historyFilePath, JSON.stringify(history, null, 4), 'utf-8');
+}
+
+function readSystemMessage() {
+    try {
+        const data = fs.readFileSync(configFilePath, 'utf-8');
+        return data;
+    } catch (error) {
+        console.error("Error reading system message:", error);
+        return "";
+    }
+}
+
+app.post('/api/chat', upload.single('image'), async (req, res) => {
+    try {
+        const { userInput } = req.body;
+        const image = req.file;
+
+        const systemMessage = readSystemMessage();
+        let promptParts = [systemMessage];
+
+        if (image) {
+            promptParts.push(
+                userInput,
+                {
+                    inlineData: {
+                        mimeType: image.mimetype,
+                        data: image.buffer.toString('base64')
+                    }
+                }
+            );
+        } else {
+            promptParts.push(userInput);
+        }
+
+        const result = await model.generateContent(promptParts);
+        const response = result.response;
+
+        let chatHistory = loadChatHistory();
+        chatHistory.unshift({ role: 'aki', content: response.text() });
+        chatHistory.unshift({ role: 'user', content: userInput });
+        saveChatHistory(chatHistory);
+
+        res.json({ text: response.text() });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+app.post('/api/clear-history', (req, res) => {
+    try {
+        saveChatHistory([]);
+        res.json({ message: 'Chat history cleared' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+app.get('/healthz', (req, res) => {
+    res.status(200).send('OK');
+});
+
+app.listen(port, () => {
+    console.log(`Server is running on port ${port}`);
+});
