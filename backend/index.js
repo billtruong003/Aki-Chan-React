@@ -79,8 +79,9 @@ app.post('/api/chat', upload.single('image'), async (req, res) => {
         console.log('Received request - userInput:', userInput, 'image:', image ? 'present' : 'not present'); // Log để debug
 
         const systemMessage = readSystemMessage();
-        let promptParts = [systemMessage];
+        let promptParts = [systemMessage]; // Cấu hình được thêm vào làm bối cảnh
 
+        // Nếu có hình ảnh, chuyển thông tin hình ảnh vào prompt
         if (image) {
             promptParts.push(
                 userInput,
@@ -95,22 +96,25 @@ app.post('/api/chat', upload.single('image'), async (req, res) => {
             promptParts.push(userInput);
         }
 
+        // Gửi prompt cho mô hình để tạo ra nội dung
         const result = await model.generateContent(promptParts);
         const response = result.response;
 
         let chatHistory = loadChatHistory();
-        chatHistory.push({ role: 'user', content: userInput }); // Thêm vào cuối
-        chatHistory.push({ role: 'aki', content: response.text() }); // Thêm vào cuối
+        chatHistory.push({ role: 'user', content: userInput }); // Thêm câu hỏi của người dùng vào lịch sử
+        chatHistory.push({ role: 'aki', content: response.text() }); // Thêm câu trả lời từ chatbot vào lịch sử
         saveChatHistory(chatHistory);
 
         console.log('Sending response:', response.text()); // Log để debug
 
+        // Chỉ trả về câu trả lời từ mô hình (không bao gồm thông điệp hệ thống)
         res.json({ text: response.text() });
     } catch (error) {
         console.error('Error in /api/chat:', error); // Log để debug
         res.status(500).json({ error: 'Internal server error' });
     }
 });
+
 
 // Route xóa lịch sử chat
 app.post('/api/clear-history', (req, res) => {
