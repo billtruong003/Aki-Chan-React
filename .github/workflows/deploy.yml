@@ -32,7 +32,7 @@ jobs:
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./client/build # Đường dẫn đến thư mục build của frontend
+          publish_dir: ./client/build # Đảm bảo là ./client/build
           # cname: example.com # Optional: Nếu bạn dùng custom domain
 
   deploy-backend:
@@ -50,8 +50,6 @@ jobs:
       - name: Install backend dependencies
         run: npm install
         working-directory: ./backend
-
-      # Bạn đã xóa bước build backend - điều này là chính xác nếu backend không cần build
 
       - name: Deploy to Render
         uses: johnbeynon/render-deploy-action@v0.0.8
