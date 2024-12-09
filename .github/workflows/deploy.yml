@@ -15,17 +15,18 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 'lts/*' # Sử dụng phiên bản LTS mới nhất
+          node-version: 'lts/*'
 
       - name: Install frontend dependencies
         run: npm install
-        working-directory: ./client
+        working-directory: ./client # Sửa lại working-directory
 
       - name: Build frontend
         run: npm run build
-        working-directory: ./client
+        working-directory: ./client # Sửa lại working-directory
         env:
           CI: ""
+          NODE_OPTIONS: "--openssl-legacy-provider" # Thêm dòng này để fix lỗi OpenSSL
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
@@ -40,21 +41,22 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up Node.js # Thêm setup Node.js cho backend nếu cần
+      - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 'lts/*'
 
-      - name: Install backend dependencies # Thêm bước cài đặt dependencies cho backend nếu cần
+      - name: Install backend dependencies
         run: npm install
-        working-directory: ./backend # Thay đổi đường dẫn nếu backend không nằm trong thư mục 'server'
+        working-directory: ./backend # Sửa lại working-directory
 
-      - name: Build backend # Thêm bước build cho backend nếu cần
-        run: npm run build # Thay đổi câu lệnh build phù hợp với dự án
-        working-directory: ./backend # Thay đổi đường dẫn nếu backend không nằm trong thư mục 'server'
+      # Xóa phần Build backend nếu backend không cần build
+      - name: Build backend
+        run: npm run build  # Sửa câu lệnh build cho phù hợp nếu cần
+        working-directory: ./backend # Sửa lại working-directory
 
       - name: Deploy to Render
         uses: johnbeynon/render-deploy-action@v0.0.8
         with:
-          api-key: ${{ secrets.RENDER_API_KEY }} # Sử dụng GitHub Secrets
-          service-id: ${{ secrets.RENDER_SERVICE_ID }} # Sử dụng GitHub Secrets
+          api-key: ${{ secrets.RENDER_API_KEY }}
+          service-id: ${{ secrets.RENDER_SERVICE_ID }}
