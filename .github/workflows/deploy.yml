@@ -11,6 +11,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+        with:
+          ref: main  # Checkout branch main
 
       - name: Set up Node.js
         uses: actions/setup-node@v3
@@ -26,14 +28,27 @@ jobs:
         working-directory: ./client
         env:
           CI: ""
-          NODE_OPTIONS: "--openssl-legacy-provider" # Fix lỗi OpenSSL
+          NODE_OPTIONS: "--openssl-legacy-provider"
 
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
+      - name: Checkout gh-pages branch
+        uses: actions/checkout@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./client/build # Đảm bảo là ./client/build
-          # cname: example.com # Optional: Nếu bạn dùng custom domain
+          ref: gh-pages  # Checkout branch gh-pages
+          path: gh-pages # Clone vào thư mục gh-pages
+
+      - name: Copy build files to gh-pages root
+        run: |
+          rm -rf ./gh-pages/*  # Xóa toàn bộ nội dung trong thư mục gh-pages
+          cp -r ./client/build/* ./gh-pages/ # Copy nội dung từ client/build vào gh-pages
+
+      - name: Commit and push to gh-pages branch
+        run: |
+          cd gh-pages
+          git config --global user.email "youremail@example.com"  # Thay bằng email của bạn
+          git config --global user.name "Your Name"  # Thay bằng tên của bạn
+          git add .
+          git commit -m "Deploy to GitHub Pages"
+          git push origin gh-pages
 
   deploy-backend:
     runs-on: ubuntu-latest
