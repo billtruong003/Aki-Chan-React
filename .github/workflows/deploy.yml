@@ -47,11 +47,11 @@ jobs:
 
       - name: Install backend dependencies # Thêm bước cài đặt dependencies cho backend nếu cần
         run: npm install
-        working-directory: ./server # Thay đổi đường dẫn nếu backend không nằm trong thư mục 'server'
+        working-directory: ./backend # Thay đổi đường dẫn nếu backend không nằm trong thư mục 'server'
 
       - name: Build backend # Thêm bước build cho backend nếu cần
         run: npm run build # Thay đổi câu lệnh build phù hợp với dự án
-        working-directory: ./server # Thay đổi đường dẫn nếu backend không nằm trong thư mục 'server'
+        working-directory: ./backend # Thay đổi đường dẫn nếu backend không nằm trong thư mục 'server'
 
       - name: Deploy to Render
         uses: johnbeynon/render-deploy-action@v0.0.8
