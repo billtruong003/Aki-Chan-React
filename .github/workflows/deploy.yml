@@ -17,8 +17,7 @@ jobs:
       - name: Check if gh-pages exists
         id: check_gh_pages
         run: |
-          git fetch origin gh-pages:gh-pages
-          if [ $? -eq 0 ]; then
+          if git ls-remote --exit-code --heads origin gh-pages; then
             echo "::set-output name=exists::true"
           else
             echo "::set-output name=exists::false"
@@ -33,7 +32,7 @@ jobs:
 
   deploy-frontend:
     runs-on: ubuntu-latest
-    needs: check-and-create-gh-pages # Đảm bảo job này chạy sau khi check-and-create-gh-pages hoàn thành
+    needs: check-and-create-gh-pages
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
