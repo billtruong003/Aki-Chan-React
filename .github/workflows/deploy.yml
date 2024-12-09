@@ -6,8 +6,34 @@ on:
       - main
 
 jobs:
+  check-and-create-gh-pages:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          ref: main
+
+      - name: Check if gh-pages exists
+        id: check_gh_pages
+        run: |
+          git fetch origin gh-pages:gh-pages
+          if [ $? -eq 0 ]; then
+            echo "::set-output name=exists::true"
+          else
+            echo "::set-output name=exists::false"
+          fi
+
+      - name: Create gh-pages branch if it doesn't exist
+        if: steps.check_gh_pages.outputs.exists == 'false'
+        run: |
+          git checkout main
+          git checkout -b gh-pages
+          git push --set-upstream origin gh-pages
+
   deploy-frontend:
     runs-on: ubuntu-latest
+    needs: check-and-create-gh-pages # Đảm bảo job này chạy sau khi check-and-create-gh-pages hoàn thành
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -29,23 +55,6 @@ jobs:
         env:
           CI: ""
           NODE_OPTIONS: "--openssl-legacy-provider"
-
-      - name: Check if gh-pages exists
-        id: check_gh_pages
-        run: |
-          git fetch origin gh-pages:gh-pages
-          if [ $? -eq 0 ]; then
-            echo "::set-output name=exists::true"
-          else
-            echo "::set-output name=exists::false"
-          fi
-
-      - name: Create gh-pages branch if it doesn't exist
-        if: steps.check_gh_pages.outputs.exists == 'false'
-        run: |
-          git checkout main # Chắc chắn đang ở branch main
-          git checkout -b gh-pages # Tạo gh-pages từ main
-          git push --set-upstream origin gh-pages # Push và theo dõi branch
 
       - name: Checkout gh-pages branch
         uses: actions/checkout@v3
