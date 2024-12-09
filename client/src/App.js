@@ -99,31 +99,31 @@ function App() {
 
   useEffect(() => {
     if (recognition) {
-      recognition.lang = 'vi-VN';
+      recognition.lang = currentLanguage;
       recognition.continuous = false;
       recognition.interimResults = false;
 
       recognition.onstart = () => {
         setIsListening(true);
-        console.log('Speech recognition started');
+        console.log(`Speech recognition (${currentLanguage}) started`);
       };
 
       recognition.onresult = (event) => {
         const result = event.results[0][0].transcript;
         setUserInput(result);
-        console.log('Speech recognition result:', result);
+        console.log(`Speech recognition (${currentLanguage}) result:`, result);
       };
 
       recognition.onerror = (event) => {
-        console.error('Speech recognition error:', event.error);
+        console.error(`Speech recognition error (${currentLanguage}):`, event.error);
       };
 
       recognition.onend = () => {
         setIsListening(false);
-        console.log('Speech recognition ended');
+        console.log(`Speech recognition (${currentLanguage}) ended`);
       };
     }
-  }, [recognition]);
+  }, [recognition, currentLanguage]);
 
   const handleVoiceInput = () => {
     if (recognition) {
@@ -135,6 +135,10 @@ function App() {
     } else {
       alert('Trình duyệt của bạn không hỗ trợ Speech Recognition API.');
     }
+  };
+
+  const toggleLanguage = () => {
+    setCurrentLanguage(currentLanguage === 'vi-VN' ? 'en-US' : 'vi-VN');
   };
 
   return (
@@ -156,6 +160,9 @@ function App() {
         <input type="file" onChange={handleImageChange} className="image-upload" />
         <button onClick={handleVoiceInput} className="voice-input-button">
           {isListening ? 'Dừng thu âm' : 'Bắt đầu thu âm'}
+        </button>
+        <button onClick={toggleLanguage} className="language-toggle-button">
+          {currentLanguage === 'vi-VN' ? 'Tiếng Việt' : 'English'}
         </button>
         <button onClick={handleSubmit} disabled={isLoading} className="submit-button">
           Gửi

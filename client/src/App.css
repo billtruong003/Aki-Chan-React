@@ -1,10 +1,20 @@
 /* Các kiểu cho toàn bộ trang */
 body {
   background-color: #212121;
-  /* Màu nền tối (đen) */
+  /* Màu nền tối */
   color: #ffffff;
-  /* Chữ màu trắng để nổi bật trên nền đen */
+  /* Màu chữ trắng */
   font-family: sans-serif;
+  margin: 0;
+  /* Loại bỏ margin mặc định của body */
+  padding: 0;
+  /* Loại bỏ padding mặc định của body */
+  display: flex;
+  /* Cho phép căn giữa nội dung theo chiều dọc */
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  /* Chiều cao tối thiểu là 100% viewport height */
 }
 
 .app-container {
@@ -12,6 +22,11 @@ body {
   flex-direction: column;
   align-items: center;
   padding: 20px;
+  width: 90%;
+  max-width: 900px;
+  /* Giới hạn chiều rộng tối đa */
+  box-sizing: border-box;
+  /* Bao gồm padding và border trong width */
 }
 
 /* Hình ảnh của Aki */
@@ -19,7 +34,12 @@ body {
   border-radius: 50%;
   border: 5px solid #ff6600;
   /* Viền cam cho ảnh */
-  width: 400px;
+  width: 200px;
+  /* Giảm kích thước ảnh */
+  height: 200px;
+  /* Giảm kích thước ảnh */
+  object-fit: cover;
+  /* Giữ tỉ lệ ảnh */
   margin-bottom: 20px;
 }
 
@@ -38,8 +58,12 @@ body {
 
 .input-container {
   display: flex;
+  align-items: center;
+  /* Căn giữa các phần tử theo chiều dọc */
   gap: 10px;
   margin-bottom: 20px;
+  width: 100%;
+  /* Chiều rộng bằng 100% container cha */
 }
 
 .user-input {
@@ -47,6 +71,8 @@ body {
   border-radius: 5px;
   border: 1px solid #ccc;
   flex-grow: 1;
+  /* Cho phép input chiếm hết khoảng trống còn lại */
+  box-sizing: border-box;
 }
 
 .image-upload {
@@ -55,17 +81,29 @@ body {
   border: 1px solid #ccc;
 }
 
-.submit-button {
+/* Các nút */
+.submit-button,
+.clear-button,
+.voice-input-button,
+.language-toggle-button {
   background-color: #ff6600;
+  /* Màu cam */
   color: white;
   padding: 10px 20px;
   border-radius: 5px;
   border: none;
   cursor: pointer;
+  transition: background-color 0.3s ease;
+  /* Hiệu ứng chuyển màu mượt mà */
+  margin: 5px;
 }
 
-.submit-button:hover {
+.submit-button:hover,
+.clear-button:hover,
+.voice-input-button:hover,
+.language-toggle-button:hover {
   background-color: #e65c00;
+  /* Màu cam đậm hơn khi hover */
 }
 
 .submit-button:disabled {
@@ -80,6 +118,8 @@ body {
 .chat-history {
   width: 100%;
   max-width: 800px;
+  margin-bottom: 20px;
+  /* Thêm margin-bottom */
 }
 
 .message {
@@ -87,29 +127,31 @@ body {
   border-radius: 8px;
   margin-bottom: 10px;
   word-wrap: break-word;
+  clear: both;
+  /* Xóa float */
 }
 
 .user-message {
   background-color: #ff6600;
   color: white;
-  text-align: right;
+  float: right;
+  /* Tin nhắn user nằm bên phải */
+  margin-left: 20px;
 }
 
 .aki-message {
   background-color: #ffebcc;
   color: #212121;
+  float: left;
+  margin-right: 20px;
 }
 
 .clear-button {
-  background-color: #ff6600;
-  color: white;
-  padding: 10px 20px;
-  border-radius: 5px;
-  border: none;
-  cursor: pointer;
   margin-top: 20px;
 }
 
-.clear-button:hover {
-  background-color: #e65c00;
+/* Nút khi đang thu âm */
+.voice-input-button.listening {
+  background-color: #e74c3c;
+  /* Màu đỏ khi đang thu âm */
 }
