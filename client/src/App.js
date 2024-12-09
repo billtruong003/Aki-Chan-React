@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import './App.css'; // Import file CSS
+import './App.css';
 
 function App() {
   const [userInput, setUserInput] = useState('');
@@ -9,11 +9,8 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    // Load chat history on component mount
     const loadHistory = async () => {
       try {
-        // Note: You might want to fetch history from the server initially
-        // For simplicity, we'll just use local storage for now
         const storedHistory = localStorage.getItem('chatHistory');
         if (storedHistory) {
           setChatHistory(JSON.parse(storedHistory));
@@ -42,16 +39,33 @@ function App() {
     }
 
     try {
-      // Sử dụng relative URL
       const response = await axios.post('/api/chat', formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
       });
 
-      // ... (xử lý response và lưu history - giữ nguyên)
+      if (response.status === 200 && response.data && response.data.text) {
+        const newMessage = response.data.text;
+
+        setChatHistory(prevHistory => [
+          ...prevHistory,
+          { role: 'user', content: userInput },
+          { role: 'aki', content: newMessage },
+        ]);
+
+        localStorage.setItem('chatHistory', JSON.stringify([
+          ...chatHistory,
+          { role: 'user', content: userInput },
+          { role: 'aki', content: newMessage },
+        ]));
+      } else {
+        console.error("Invalid response from server:", response);
+        alert('Lỗi server. Vui lòng thử lại.');
+      }
     } catch (error) {
       console.error("Error:", error);
+      alert('Lỗi khi gọi API. Vui lòng thử lại.');
     } finally {
       setIsLoading(false);
       setUserInput('');
@@ -61,7 +75,7 @@ function App() {
 
   const handleClearHistory = async () => {
     try {
-      await axios.post('/api/clear-history'); // Sử dụng relative URL
+      await axios.post('/api/clear-history');
       setChatHistory([]);
       localStorage.removeItem('chatHistory');
     } catch (error) {
