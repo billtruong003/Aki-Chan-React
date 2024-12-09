@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import axios from 'axios';
-import ReactMarkdown from 'react-markdown'; // Import ReactMarkdown
-import remarkGfm from 'remark-gfm'; // Import remarkGfm
+import MDEditor from '@uiw/react-md-editor';
 import './App.css';
 
 const API_BASE_URL = 'https://aki-chan-backend.onrender.com';
@@ -160,13 +159,15 @@ function App() {
           placeholder="Nhập câu hỏi của bạn:"
           className="user-input"
         />
-        <input type="file" onChange={handleImageChange} className="image-upload" />
-        <button onClick={handleVoiceInput} className="voice-input-button">
-          {isListening ? 'Dừng thu âm' : 'Bắt đầu thu âm'}
-        </button>
-        <button onClick={toggleLanguage} className="language-toggle-button">
-          {currentLanguage === 'vi-VN' ? 'Tiếng Việt' : 'English'}
-        </button>
+        <div className="input-actions">
+          <input type="file" onChange={handleImageChange} className="image-upload" />
+          <button onClick={handleVoiceInput} className="voice-input-button">
+            {isListening ? 'Dừng thu âm' : 'Bắt đầu thu âm'}
+          </button>
+          <button onClick={toggleLanguage} className="language-toggle-button">
+            {currentLanguage === 'vi-VN' ? 'Tiếng Việt' : 'English'}
+          </button>
+        </div>
         <button onClick={handleSubmit} disabled={isLoading} className="submit-button">
           Gửi
         </button>
@@ -174,17 +175,29 @@ function App() {
 
       {isLoading && <div className="loading">Đang nhận phản hồi từ Aki...</div>}
 
-      <div className="chat-history">
-        {chatHistory.map((message, index) => (
-          <div key={index} className={`message ${message.role}-message`}>
-            <ReactMarkdown remarkPlugins={[remarkGfm]} children={message.content} /> {/* Sử dụng ReactMarkdown */}
-          </div>
-        ))}
-      </div>
-
       <button onClick={handleClearHistory} className="clear-button">
         Xóa lịch sử
       </button>
+
+      <div className="chat-history">
+        {chatHistory.map((message, index) => (
+          <div key={index} className={`message ${message.role}-message`}>
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              <img
+                src={message.role === 'user'
+                  ? 'https://yt3.googleusercontent.com/5_iNqlbzzaC-8MRY-_K1zw325-L38QwLKySObLpKyz1gX7pN_QXWqRcLHm5Im4GTaQnFpC41ixA=s900-c-k-c0x00ffffff-no-rj'
+                  : 'aki-maid.webp'}
+                alt={message.role === 'user' ? 'User' : 'Aki'}
+                className="role-image"
+              />
+              <strong className="message-role">
+                {message.role === 'user' ? 'User: ' : 'Aki: '}
+              </strong>
+            </div>
+            <MDEditor.Markdown source={message.content} data-color-mode="light" />
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
