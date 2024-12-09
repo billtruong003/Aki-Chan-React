@@ -175,7 +175,7 @@ function App() {
       <div className="chat-history">
         {chatHistory.map((message, index) => (
           <div key={index} className={`message ${message.role}-message`}>
-            {message.content}
+            <ReactMarkdown remarkPlugins={[remarkGfm]} children={message.content} /> {/* Sử dụng ReactMarkdown */}
           </div>
         ))}
       </div>

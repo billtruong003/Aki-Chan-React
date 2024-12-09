@@ -1,20 +1,23 @@
-/* Các kiểu cho toàn bộ trang */
+/* Reset CSS */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
 body {
-  background-color: #212121;
-  /* Màu nền tối */
+  background-color: #1e1e1e;
+  /* Màu nền gần đen */
   color: #ffffff;
   /* Màu chữ trắng */
-  font-family: sans-serif;
-  margin: 0;
-  /* Loại bỏ margin mặc định của body */
-  padding: 0;
-  /* Loại bỏ padding mặc định của body */
+  font-family: 'Roboto', sans-serif;
+  /* Sử dụng font Roboto */
   display: flex;
-  /* Cho phép căn giữa nội dung theo chiều dọc */
   flex-direction: column;
   align-items: center;
   min-height: 100vh;
-  /* Chiều cao tối thiểu là 100% viewport height */
+  overflow-x: hidden;
+  /* Ẩn thanh cuộn ngang nếu nội dung quá dài */
 }
 
 .app-container {
@@ -23,65 +26,72 @@ body {
   align-items: center;
   padding: 20px;
   width: 90%;
-  max-width: 900px;
-  /* Giới hạn chiều rộng tối đa */
-  box-sizing: border-box;
-  /* Bao gồm padding và border trong width */
+  max-width: 800px;
+  border-radius: 10px;
+  /* Bo tròn góc container */
+  background-color: #282828;
+  /* Màu nền hơi nhạt hơn body */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  /* Đổ bóng */
+  margin-top: 20px;
 }
 
-/* Hình ảnh của Aki */
+/* Hình ảnh */
 .aki-image {
-  border-radius: 50%;
-  border: 5px solid #ff6600;
-  /* Viền cam cho ảnh */
-  width: 200px;
-  /* Giảm kích thước ảnh */
-  height: 200px;
-  /* Giảm kích thước ảnh */
+  width: 150px;
+  height: 150px;
   object-fit: cover;
-  /* Giữ tỉ lệ ảnh */
+  border-radius: 50%;
+  border: 4px solid #ff6600;
+  /* Viền màu cam */
   margin-bottom: 20px;
 }
 
-/* Tiêu đề ứng dụng */
+/* Tiêu đề */
 .app-title {
   color: #ff6600;
-  /* Màu cam cho tiêu đề */
-  text-align: center;
+  font-size: 2em;
   margin-bottom: 10px;
 }
 
+/* Mô tả */
 .app-description {
   text-align: center;
   margin-bottom: 20px;
+  color: #a0a0a0;
+  /* Màu chữ xám nhạt */
 }
 
+/* Input và nút bấm */
 .input-container {
   display: flex;
   align-items: center;
-  /* Căn giữa các phần tử theo chiều dọc */
-  gap: 10px;
-  margin-bottom: 20px;
   width: 100%;
-  /* Chiều rộng bằng 100% container cha */
+  margin-bottom: 20px;
 }
 
 .user-input {
   padding: 10px;
-  border-radius: 5px;
-  border: 1px solid #ccc;
+  border-radius: 25px;
+  border: 1px solid #444;
+  /* Viền xám đậm */
+  background-color: #333;
+  /* Màu nền xám đậm */
+  color: white;
   flex-grow: 1;
-  /* Cho phép input chiếm hết khoảng trống còn lại */
-  box-sizing: border-box;
+  margin-right: 10px;
 }
 
 .image-upload {
   padding: 10px;
-  border-radius: 5px;
-  border: 1px solid #ccc;
+  border-radius: 25px;
+  border: 1px solid #444;
+  /* Màu xám đậm */
+  background-color: #333;
+  color: white;
+  cursor: pointer;
 }
 
-/* Các nút */
 .submit-button,
 .clear-button,
 .voice-input-button,
@@ -90,12 +100,11 @@ body {
   /* Màu cam */
   color: white;
   padding: 10px 20px;
-  border-radius: 5px;
   border: none;
+  border-radius: 25px;
   cursor: pointer;
   transition: background-color 0.3s ease;
-  /* Hiệu ứng chuyển màu mượt mà */
-  margin: 5px;
+  margin-left: 10px;
 }
 
 .submit-button:hover,
@@ -111,47 +120,94 @@ body {
   cursor: default;
 }
 
-.loading {
-  margin-bottom: 20px;
-}
-
+/* Lịch sử trò chuyện */
 .chat-history {
   width: 100%;
-  max-width: 800px;
   margin-bottom: 20px;
-  /* Thêm margin-bottom */
+  overflow-y: auto;
+  /* Thêm thanh cuộn dọc nếu nội dung quá dài */
+  max-height: 400px;
+  /* Giới hạn chiều cao tối đa của lịch sử trò chuyện */
 }
 
 .message {
-  padding: 10px;
-  border-radius: 8px;
-  margin-bottom: 10px;
+  padding: 15px;
+  border-radius: 15px;
+  margin-bottom: 15px;
   word-wrap: break-word;
+  position: relative;
   clear: both;
-  /* Xóa float */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  /* Đổ bóng nhẹ */
 }
 
 .user-message {
   background-color: #ff6600;
   color: white;
-  float: right;
-  /* Tin nhắn user nằm bên phải */
-  margin-left: 20px;
+  align-self: flex-end;
+  /* Căn phải */
+  margin-left: 40px;
+  /* Khoảng cách bên trái */
+}
+
+.user-message::before {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  right: 12px;
+  border-width: 8px 8px 0 0;
+  border-style: solid;
+  border-color: #ff6600 transparent;
 }
 
 .aki-message {
-  background-color: #ffebcc;
-  color: #212121;
-  float: left;
-  margin-right: 20px;
+  background-color: #333;
+  /* Màu nền xám đậm */
+  color: white;
+  align-self: flex-start;
+  /* Căn trái */
+  margin-right: 40px;
+  /* Khoảng cách bên phải */
 }
 
-.clear-button {
-  margin-top: 20px;
+.aki-message::before {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 12px;
+  border-width: 8px 0 0 8px;
+  border-style: solid;
+  border-color: #333 transparent;
 }
 
-/* Nút khi đang thu âm */
-.voice-input-button.listening {
-  background-color: #e74c3c;
-  /* Màu đỏ khi đang thu âm */
+/* Markdown styles */
+.chat-history code {
+  background-color: #444;
+  padding: 2px 4px;
+  border-radius: 4px;
+  font-family: monospace;
+}
+
+.chat-history pre {
+  background-color: #444;
+  padding: 10px;
+  border-radius: 4px;
+  font-family: monospace;
+  overflow-x: auto;
+  white-space: pre-wrap;
+}
+
+.chat-history blockquote {
+  border-left: 4px solid #ff6600;
+  padding-left: 10px;
+  margin-left: 0;
+}
+
+/* Loading */
+.loading {
+  margin-bottom: 20px;
+  font-style: italic;
+  /* Chữ nghiêng */
+  color: #a0a0a0;
+  /* Màu chữ xám nhạt */
 }
