@@ -66,35 +66,60 @@ function readSystemMessage() {
         return '';
     }
 }
-
 app.post('/api/chat', upload.single('image'), async (req, res) => {
     const { userInput } = req.body;
     const systemMessage = readSystemMessage();
-
+    
     try {
         if (!userInput && !req.file) {
             return res.status(400).json({ error: 'User input or image is required.' });
         }
 
-        const promptParts = [systemMessage, userInput || ''];
+        // Lấy lịch sử trò chuyện hiện tại từ file
+        const chatHistory = loadChatHistory();
 
+        // Lấy 5-10 câu trả lời gần nhất từ chatbot để tránh quá tải
+        const contextHistory = chatHistory
+            .filter((message) => message.role === 'aki')  // Chỉ lấy câu trả lời của chatbot
+            .slice(0, 5);  // Giới hạn 5 câu trả lời gần nhất
+
+        // Ghép lịch sử trò chuyện vào prompt
+        let prompt = systemMessage;
+        contextHistory.forEach((message) => {
+            prompt += `\nAki: ${message.content}`;  // Chỉ thêm câu trả lời của chatbot
+        });
+
+        // Thêm hướng dẫn về ngữ cảnh vào cuối phần lịch sử
+        prompt += `\n\nĐây là phần phía trước để em hiểu ngữ cảnh, không cần trả lời. Chỉ cần tập trung vào trọng tâm cho câu hỏi phía dưới:\n`;
+
+        // Thêm câu hỏi người dùng vào cuối prompt
+        prompt += `\nUser: ${userInput}`;
+
+        // Nếu có hình ảnh, thêm hình ảnh vào prompt (base64)
         if (req.file) {
             const image = req.file.buffer;
             const imageBase64 = image.toString('base64');
-            promptParts.push(`data:image/jpeg;base64,${imageBase64}`);
+            prompt += `\nImage: data:image/jpeg;base64,${imageBase64}`;
         }
 
-        const prompt = promptParts.join('\n');
         console.log('Final prompt:', prompt);
 
+        // Gửi prompt đến Google AI và nhận phản hồi
         const result = await model.generateContent(prompt);
         console.log('Google API response:', result);
 
-        const text = await result.response.text();
+        // Xử lý kết quả API để lấy dữ liệu chính xác
+        let text = '';
+        if (result && result.response && result.response.text) {
+            text = await result.response.text();
+        } else {
+            // Nếu không có phản hồi văn bản từ API, thông báo cho người dùng
+            text = 'Xin lỗi, em không thể tìm thấy thông tin mà chủ nhân yêu cầu (｡•́︿•̀｡)';
+        }
+
         console.log('Generated response text:', text);
 
         // Lưu lịch sử chat
-        const chatHistory = loadChatHistory();
         const newHistory = [
             { role: 'user', content: userInput },
             { role: 'aki', content: text },
@@ -102,12 +127,14 @@ app.post('/api/chat', upload.single('image'), async (req, res) => {
         ];
 
         saveChatHistory(newHistory);
+
         return res.status(200).json({ text });
     } catch (error) {
         console.error('Error in /api/chat:', error.message);
         return res.status(500).json({ error: 'Failed to generate content', details: error.message });
     }
 });
+
 
 // Clear history endpoint
 app.post('/api/clear-history', (req, res) => {

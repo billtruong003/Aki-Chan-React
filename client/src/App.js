@@ -12,6 +12,7 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const [currentLanguage, setCurrentLanguage] = useState('vi-VN');
+  const [isSpeaking, setIsSpeaking] = useState(false); // Thêm state để theo dõi trạng thái phát âm
 
   useEffect(() => {
     const loadHistory = async () => {
@@ -89,6 +90,26 @@ function App() {
       console.error('Error clearing chat history:', error);
     }
   };
+
+  const speakText = (text) => {
+    if (isSpeaking) {
+      window.responsiveVoice.cancel(); // Dừng lại nếu đang phát âm
+      setIsSpeaking(false);
+    } else {
+      // Phát âm văn bản với ResponsiveVoice
+      window.responsiveVoice.speak(text, currentLanguage === 'vi-VN' ? "Vietnamese Female" : "US English Female", {
+        onstart: () => {
+          console.log('Em bắt đầu phát âm rồi! (｡♥‿♥｡)');
+          setIsSpeaking(true);
+        },
+        onend: () => {
+          console.log('Em đã phát xong rồi, chủ nhân (owo)');
+          setIsSpeaking(false);
+        },
+      });
+    }
+  };
+  
 
   const SpeechRecognition =
     window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -193,6 +214,11 @@ function App() {
               </strong>
             </div>
             <MDEditor.Markdown source={message.content} data-color-mode="light" />
+            {message.role === 'aki' && (
+              <button onClick={() => speakText(message.content)} className="speak-button">
+                {isSpeaking ? 'Dừng phát âm' : 'Phát âm'}
+              </button>
+            )}
           </div>
         ))}
       </div>
