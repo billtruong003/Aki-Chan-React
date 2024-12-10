@@ -15,7 +15,7 @@ if (!apiKey) {
 }
 
 const genAI = new GoogleGenerativeAI(apiKey);
-const model = genAI.getGenerativeModel({ model: 'gemini-exp-1206' });
+const model = genAI.getGenerativeModel({ model: 'Gemini 1.5 Pro' });
 
 const upload = multer({ storage: multer.memoryStorage() });
 
