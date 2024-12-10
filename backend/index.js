@@ -8,25 +8,23 @@ const path = require('path');
 const app = express();
 const port = process.env.PORT || 10000; // Cổng 10000 cho Render
 
-const apiKey = process.env.GOOGLE_API_KEY;
+// const apiKey = process.env.GOOGLE_API_KEY;
+const apiKey = 'AIzaSyD_1MECGOfwtyggE1J5tJXiNPrn9pY1EoI'; 
 if (!apiKey) {
     console.error('GOOGLE_API_KEY environment variable is not set.');
     process.exit(1);
 }
 
 const genAI = new GoogleGenerativeAI(apiKey);
-const model = genAI.getGenerativeModel({ model: 'Gemini 1.5 Pro' });
-
+const model = genAI.getGenerativeModel({ model: 'gemini-1.5-pro-latest' });
 const upload = multer({ storage: multer.memoryStorage() });
 
 // CORS configuration
-const allowedOrigins = ['https://billtruong003.github.io', 'http://localhost:3000']; // Chính xác origin của frontend
+const allowedOrigins = ['https://billtruong003.github.io', 'http://localhost:3000', 'http://192.168.1.65:3000'];
 app.use(
     cors({
         origin: function (origin, callback) {
-            // Cho phép các request không có origin (ví dụ: từ Postman)
             if (!origin) return callback(null, true);
-
             if (allowedOrigins.indexOf(origin) === -1) {
                 var msg =
                     'The CORS policy for this site does not ' +
@@ -41,7 +39,6 @@ app.use(
 // Thêm middleware để parse request body
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
 
 const historyFilePath = path.join(__dirname, 'chat_history.json');
 const configFilePath = path.join(__dirname, 'config_character.txt');
@@ -70,69 +67,59 @@ function readSystemMessage() {
     }
 }
 
-// Route xử lý chat
 app.post('/api/chat', upload.single('image'), async (req, res) => {
+    const { userInput } = req.body;
+    const systemMessage = readSystemMessage();
+
     try {
-        const { userInput } = req.body;
-        const image = req.file;
-
-        console.log('Received request - userInput:', userInput, 'image:', image ? 'present' : 'not present'); // Log để debug
-
-        const systemMessage = readSystemMessage();
-        let promptParts = [systemMessage]; // Cấu hình được thêm vào làm bối cảnh
-
-        // Nếu có hình ảnh, chuyển thông tin hình ảnh vào prompt
-        if (image) {
-            promptParts.push(
-                userInput,
-                {
-                    inlineData: {
-                        mimeType: image.mimetype,
-                        data: image.buffer.toString('base64'),
-                    },
-                }
-            );
-        } else {
-            promptParts.push(userInput);
+        if (!userInput && !req.file) {
+            return res.status(400).json({ error: 'User input or image is required.' });
         }
 
-        // Gửi prompt cho mô hình để tạo ra nội dung
-        const result = await model.generateContent(promptParts);
-        const response = result.response;
+        const promptParts = [systemMessage, userInput || ''];
 
-        let chatHistory = loadChatHistory();
-        chatHistory.push({ role: 'user', content: userInput }); // Thêm câu hỏi của người dùng vào lịch sử
-        chatHistory.push({ role: 'aki', content: response.text() }); // Thêm câu trả lời từ chatbot vào lịch sử
-        saveChatHistory(chatHistory);
+        if (req.file) {
+            const image = req.file.buffer;
+            const imageBase64 = image.toString('base64');
+            promptParts.push(`data:image/jpeg;base64,${imageBase64}`);
+        }
 
-        console.log('Sending response:', response.text()); // Log để debug
+        const prompt = promptParts.join('\n');
+        console.log('Final prompt:', prompt);
 
-        // Chỉ trả về câu trả lời từ mô hình (không bao gồm thông điệp hệ thống)
-        res.json({ text: response.text() });
+        const result = await model.generateContent(prompt);
+        console.log('Google API response:', result);
+
+        const text = await result.response.text();
+        console.log('Generated response text:', text);
+
+        // Lưu lịch sử chat
+        const chatHistory = loadChatHistory();
+        const newHistory = [
+            { role: 'user', content: userInput },
+            { role: 'aki', content: text },
+            ...chatHistory,
+        ];
+
+        saveChatHistory(newHistory);
+        return res.status(200).json({ text });
     } catch (error) {
-        console.error('Error in /api/chat:', error); // Log để debug
-        res.status(500).json({ error: 'Internal server error' });
+        console.error('Error in /api/chat:', error.message);
+        return res.status(500).json({ error: 'Failed to generate content', details: error.message });
     }
 });
 
-
-// Route xóa lịch sử chat
+// Clear history endpoint
 app.post('/api/clear-history', (req, res) => {
     try {
-        console.log('Received request to clear history'); // Log để debug
         saveChatHistory([]);
-        res.json({ message: 'Chat history cleared' });
+        res.status(200).json({ message: 'Chat history cleared successfully' });
     } catch (error) {
-        console.error('Error in /api/clear-history:', error); // Log để debug
-        res.status(500).json({ error: 'Internal server error' });
+        console.error('Error clearing chat history:', error.message);
+        res.status(500).json({ error: 'Failed to clear chat history', details: error.message });
     }
-});
-
-// Health check endpoint
-app.get('/healthz', (req, res) => {
-    res.status(200).send('OK');
 });
 
 app.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
+    console.log(`Server is running on http://localhost:${port}`);
 });

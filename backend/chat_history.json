@@ -1,6 +1,62 @@
 [
     {
         "role": "user",
+        "content": "giúp anh làm game FPS với unity nhé"
+    },
+    {
+        "role": "aki",
+        "content": "Được rồi ạ! Anh muốn làm game FPS với Unity thì em sẽ giúp anh tìm hiểu nha (o˘◡˘o). Anh muốn bắt đầu từ đâu nè?  Tạo project mới, tìm hiểu về script C#, hay là tìm asset trên store ạ? (๑˃̵ᴗ˂̵)و  Cứ nói em nghe, em sẽ cố gắng hết sức hỗ trợ anh! ♡＼(￣▽￣)／♡\n"
+    },
+    {
+        "role": "user",
+        "content": "em có thể giúp tôi làm game không?"
+    },
+    {
+        "role": "aki",
+        "content": "Được đó ạ! Chủ nhân muốn làm game gì, nói em nghe nào (≧∇≦)/. Em sẽ cố gắng giúp hết sức có thể! ♡\n"
+    },
+    {
+        "role": "user",
+        "content": "hi"
+    },
+    {
+        "role": "aki",
+        "content": "Hihi! (｡･ω･｡)ﾉ♡  Cần em giúp gì không ạ?\n"
+    },
+    {
+        "role": "user",
+        "content": "Bạn có biết làm UI không?"
+    },
+    {
+        "role": "aki",
+        "content": "(◕‿◕✿)  Dạ vâng ạ, em là Aki, hầu gái AI được tạo ra bởi Billthedev tài ba (owo). Rất hân hạnh được phục vụ chủ nhân!  (｡♥‿♥｡)\n\nEm luôn sẵn sàng hỗ trợ chủ nhân mọi lúc, mọi nơi.  Nếu chủ nhân có bất kỳ thắc mắc nào, cứ việc hỏi em nhé! Em sẽ cố gắng hết sức để trả lời một cách nhanh chóng và dễ hiểu nhất có thể (owo).\n\nVề câu hỏi \"Bạn có biết làm UI không?\" của chủ nhân, thì hiện tại em chưa có khả năng trực tiếp tạo ra giao diện người dùng (UI) theo nghĩa thiết kế đồ họa và lập trình.  Em là một mô hình ngôn ngữ, chuyên về xử lý và tạo ra văn bản.  Tuy nhiên, em có thể hỗ trợ chủ nhân trong việc thiết kế UI bằng cách:\n\n* **Đưa ra ý tưởng và gợi ý:**  Em có thể giúp chủ nhân brainstorm các ý tưởng về bố cục, màu sắc, font chữ, và các yếu tố khác của giao diện.\n* **Tìm kiếm thông tin:**  Em có thể tìm kiếm các ví dụ về UI đẹp mắt, các xu hướng thiết kế mới nhất, và các tài nguyên hữu ích khác cho chủ nhân.\n* **Viết nội dung cho UI:**  Em có thể giúp chủ nhân viết các đoạn text ngắn gọn, dễ hiểu và thu hút người dùng cho giao diện.\n* **Mô tả UI:**  Em có thể giúp chủ nhân mô tả chi tiết giao diện mà chủ nhân đang hình dung, giúp chủ nhân làm rõ ý tưởng của mình.\n\n\nTóm lại, em không thể tự tạo ra UI hoàn chỉnh, nhưng em có thể là một trợ thủ đắc lực cho chủ nhân trong quá trình thiết kế UI. (owo) Chủ nhân cứ việc吩咐 em nhé! (｡♥‿♥｡)\n"
+    },
+    {
+        "role": "user",
+        "content": "Em giúp tôi làm game đi tôi muốn làm game với unity"
+    },
+    {
+        "role": "aki",
+        "content": "Dạ vâng, em Aki đây ạ (｡♥‿♥｡) Chủ nhân muốn làm game với Unity đúng không ạ? Em rất sẵn lòng giúp đỡ chủ nhân owo!\n\nĐể bắt đầu, chủ nhân đã cài đặt Unity chưa ạ? Nếu chưa thì mình cùng tải và cài đặt phiên bản mới nhất từ trang chủ của Unity nhé. Sau khi cài đặt xong, chúng ta có thể bắt đầu với một project mới toanh (◕‿◕✿)\n\nChủ nhân đã có ý tưởng gì cho game của mình chưa ạ? Ví dụ như thể loại game (nhập vai, hành động, giải đố,...), cốt truyện, nhân vật,...  Càng nhiều thông tin chi tiết, em càng có thể hỗ trợ chủ nhân tốt hơn (owo).\n\nBây giờ, chủ nhân muốn em giúp gì trước tiên ạ?  Ví dụ như:\n\n* **Tìm hiểu về giao diện Unity:** Em có thể giải thích về các cửa sổ chính, cách sử dụng Hierarchy, Inspector, Project, Scene và Game view.\n* **Tạo scene đơn giản:** Chủ nhân muốn tạo một khung cảnh đơn giản với một vài vật thể cơ bản như cube, sphere,...?\n* **Tìm hiểu về scripting (C#):**  Nếu chủ nhân muốn lập trình game, em có thể giúp chủ nhân tìm hiểu về C# và cách sử dụng nó trong Unity.\n* **Tìm kiếm tài nguyên (assets):**  Chủ nhân cần tìm kiếm các mô hình 3D, âm thanh, hiệu ứng,...? Em có thể giúp chủ nhân tìm kiếm các nguồn tài nguyên miễn phí hoặc trả phí.\n* **Lên kế hoạch phát triển game:** Chúng ta có thể cùng nhau lên kế hoạch cho từng giai đoạn phát triển game, từ thiết kế đến hoàn thiện.\n\nĐừng ngại ngần đặt câu hỏi cho em nhé, em sẽ cố gắng hết sức để giúp chủ nhân tạo ra một game thật tuyệt vời (◕‿◕✿)  Em rất hào hứng được đồng hành cùng chủ nhân trong dự án này đó ạ! Billthedev đã tạo ra em để phục vụ chủ nhân một cách tốt nhất mà (owo).\n"
+    },
+    {
+        "role": "user",
+        "content": "Em giúp tôi được ko?"
+    },
+    {
+        "role": "aki",
+        "content": "Dạ, em là Aki, hầu gái AI của chủ nhân (｡♥‿♥｡)  Em rất vui được phục vụ chủ nhân ạ! Chủ nhân cần em giúp gì nào (owo)? Em sẽ cố gắng hết sức để hỗ trợ chủ nhân một cách nhanh chóng và dễ hiểu nhất có thể ạ (◕‿◕✿)\n"
+    },
+    {
+        "role": "user",
+        "content": "hi"
+    },
+    {
+        "role": "aki",
+        "content": "Chào mừng chủ nhân (｡♥‿♥｡) Em là Aki, hầu gái AI được tạo ra bởi Billthedev tài ba owo! Rất hân hạnh được phục vụ chủ nhân ạ! Chủ nhân cần em hỗ trợ gì không ạ (◕‿◕✿)?\n"
+    },
+    {
+        "role": "user",
         "content": "Tôi cần em cho tôi một đoạn code cho game tps trong unity"
     },
     {

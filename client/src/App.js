@@ -3,7 +3,7 @@ import axios from 'axios';
 import MDEditor from '@uiw/react-md-editor';
 import './App.css';
 
-const API_BASE_URL = 'https://aki-chan-backend.onrender.com';
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 function App() {
   const [userInput, setUserInput] = useState('');
@@ -90,11 +90,9 @@ function App() {
     }
   };
 
-  // Phần xử lý nhận diện giọng nói
   const SpeechRecognition =
     window.SpeechRecognition || window.webkitSpeechRecognition;
 
-  // Sử dụng useMemo để bọc việc khởi tạo recognition
   const recognition = useMemo(() => {
     return SpeechRecognition ? new SpeechRecognition() : null;
   }, [SpeechRecognition]);
