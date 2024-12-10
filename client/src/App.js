@@ -103,7 +103,7 @@ function App() {
   
         // Phát âm văn bản với ResponsiveVoice
         window.responsiveVoice.speak(cleanedText, currentLanguage === 'vi-VN' ? "Vietnamese Female" : "US English Female", {
-          rate: 0.9,      // Tốc độ nói (1.0 là bình thường)
+          rate: 1.1,      // Tốc độ nói (1.0 là bình thường)
           volume: 1,      // Âm lượng (1.0 là tối đa)
           pitch: 1.3,     // Tăng cao độ giọng (có thể làm giọng nghe dễ thương hơn)
           onstart: () => {
