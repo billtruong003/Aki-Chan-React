@@ -100,9 +100,9 @@ function App() {
       if (window.responsiveVoice) {
         // Phát âm văn bản với ResponsiveVoice
         window.responsiveVoice.speak(text, currentLanguage === 'vi-VN' ? "Vietnamese Female" : "US English Female", {
-          rate: 1.1,      // Tốc độ nói (1.0 là bình thường)
+          rate: 0.9,      // Tốc độ nói (1.0 là bình thường)
           volume: 1,      // Âm lượng (1.0 là tối đa)
-          pitch: 1.8,     // Tăng cao độ giọng (có thể làm giọng nghe dễ thương hơn)
+          pitch: 1.3,     // Tăng cao độ giọng (có thể làm giọng nghe dễ thương hơn)
           onstart: () => {
             console.log('Em bắt đầu phát âm rồi! (｡♥‿♥｡)');
             setIsSpeaking(true);
