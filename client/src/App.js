@@ -98,8 +98,8 @@ function App() {
     } else {
       // Kiểm tra xem ResponsiveVoice đã được tải chưa
       if (window.responsiveVoice) {
-        // Làm sạch text bằng cách loại bỏ các biểu tượng cảm xúc trong dấu ngoặc
-        const cleanedText = text.replace(/\([^\)]*\)/g, '.');  // Thay thế biểu tượng cảm xúc trong dấu ngoặc bằng dấu chấm
+        // Làm sạch text bằng cách loại bỏ các ký tự trong dấu ngoặc
+        const cleanedText = text.replace(/\(.*?\)/g, ''); // Loại bỏ các ký tự nằm trong dấu ngoặc và cả dấu ngoặc
   
         // Phát âm văn bản với ResponsiveVoice
         window.responsiveVoice.speak(cleanedText, currentLanguage === 'vi-VN' ? "Vietnamese Female" : "US English Female", {
@@ -120,6 +120,7 @@ function App() {
       }
     }
   };
+  
   
   
 
