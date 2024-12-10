@@ -96,8 +96,11 @@ function App() {
       window.responsiveVoice.cancel(); // Dừng lại nếu đang phát âm
       setIsSpeaking(false);
     } else {
-      // Phát âm văn bản với ResponsiveVoice
+      // Phát âm văn bản với ResponsiveVoice, tùy chỉnh tốc độ và âm lượng
       window.responsiveVoice.speak(text, currentLanguage === 'vi-VN' ? "Vietnamese Female" : "US English Female", {
+        rate: 1.2,      // Tốc độ nói (1.0 là bình thường)
+        volume: 1,      // Âm lượng (1.0 là tối đa)
+        pitch: 1.5,     // Tăng cao độ giọng (có thể làm giọng nghe dễ thương hơn)
         onstart: () => {
           console.log('Em bắt đầu phát âm rồi! (｡♥‿♥｡)');
           setIsSpeaking(true);
@@ -109,6 +112,7 @@ function App() {
       });
     }
   };
+  
   
 
   const SpeechRecognition =
