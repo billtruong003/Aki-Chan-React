@@ -92,16 +92,16 @@ function App() {
   };
 
   const speakText = (text) => {
-    // Lọc và thay thế các biểu tượng cảm xúc bằng dấu phẩy
-    const cleanedText = text.replace(/\([^\)]*\)/g, '.');  // Thay thế các chuỗi kiểu "(owo)" bằng dấu phẩy
-    
     if (isSpeaking) {
       window.responsiveVoice.cancel(); // Dừng lại nếu đang phát âm
       setIsSpeaking(false);
     } else {
       // Kiểm tra xem ResponsiveVoice đã được tải chưa
       if (window.responsiveVoice) {
-        // Phát âm văn bản đã được lọc
+        // Làm sạch text bằng cách loại bỏ các biểu tượng cảm xúc trong dấu ngoặc
+        const cleanedText = text.replace(/\([^\)]*\)/g, '.');  // Thay thế biểu tượng cảm xúc trong dấu ngoặc bằng dấu chấm
+  
+        // Phát âm văn bản với ResponsiveVoice
         window.responsiveVoice.speak(cleanedText, currentLanguage === 'vi-VN' ? "Vietnamese Female" : "US English Female", {
           rate: 0.9,      // Tốc độ nói (1.0 là bình thường)
           volume: 1,      // Âm lượng (1.0 là tối đa)
@@ -120,6 +120,7 @@ function App() {
       }
     }
   };
+  
   
 
   const SpeechRecognition =
